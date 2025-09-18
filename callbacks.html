@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora con Callbacks</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+      input,
+      button {
+        padding: 8px;
+        margin: 5px;
+        font-size: 16px;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      #results {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Calculadora con Callbacks</h2>
+
+    <form id="form">
+      <label>Número (1-25):</label>
+      <input type="number" id="numero" min="1" max="25" required />
+      <button type="submit">Calcular</button>
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+      // Función que usa callbacks para multiplicar (SIN recursividad)
+      function multiplicarConCallbacks(numero, callback) {
+        let contador = 1;
+
+        function procesarSiguiente() {
+          const resultado = numero * contador;
+          callback(numero, contador, resultado);
+          contador++;
+
+          // Si no hemos terminado, encolar siguiente callback
+          if (contador <= numero) {
+            setTimeout(procesarSiguiente, 200);
+          }
+        }
+
+        // Iniciar el primer callback
+        setTimeout(procesarSiguiente, 200);
+      }
+
+      // Callback que muestra el resultado
+      function mostrarResultado(base, multiplicador, resultado) {
+        const div = document.getElementById("results");
+        div.innerHTML += `${base} × ${multiplicador} = ${resultado}<br>`;
+      }
+
+      // Event listener del formulario
+      document.getElementById("form").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const numero = parseInt(document.getElementById("numero").value);
+
+        // Validación simple
+        if (numero < 1 || numero > 25) {
+          alert("Número debe estar entre 1 y 25");
+          return;
+        }
+
+        // Limpiar resultados
+        document.getElementById("results").innerHTML = "";
+
+        // Llamar función con callback
+        multiplicarConCallbacks(numero, mostrarResultado);
+      });
+    </script>
+  </body>
+</html>
